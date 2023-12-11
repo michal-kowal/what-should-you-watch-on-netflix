@@ -66,6 +66,136 @@ rule "strong female sells drugs"
 when
 	exists Question(question=="Do you like them to sell drugs", answer=="yes");
 then
-	Gui gui = new Gui("Your result is: WEDS", new ArrayList<String>());
+	Gui gui = new Gui("Your result is: WEEDS", new ArrayList<String>());
+	gui.displayQuestion();
+end
+
+rule "no strong female sells drugs"
+when
+	exists Question(question=="Do you like them to sell drugs", answer=="no");
+then
+	String question = "Tina Fey or Amy Poehler";
+    ArrayList<String> answersList = new ArrayList();
+    answersList.add("Tina");
+    answersList.add("Amy");
+    Gui gui = new Gui(question, answersList);
+    String result = gui.displayQuestion();
+    insert(new Question(question, answersList, result));
+end
+
+rule "amy"
+when
+	exists Question(question=="Tina Fey or Amy Poehler", answer=="Amy");
+then
+	Gui gui = new Gui("Your result is: PARKS & RECREATION", new ArrayList<String>());
+	gui.displayQuestion();
+end
+
+rule "tina"
+when
+	exists Question(question=="Tina Fey or Amy Poehler", answer=="Tina");
+then
+	Gui gui = new Gui("Your result is: 30 ROCKS", new ArrayList<String>());
+	gui.displayQuestion();
+end
+
+rule "no strong female characters"
+when
+	exists Question(question=="Do you like strong female characters", answer=="no");
+then
+	String question = "Work place humor";
+    ArrayList<String> answersList = new ArrayList();
+    answersList.add("yes");
+    answersList.add("no");
+    Gui gui = new Gui(question, answersList);
+    String result = gui.displayQuestion();
+    insert(new Question(question, answersList, result));
+end
+
+rule "work place humor"
+when
+	exists Question(question=="Work place humor", answer=="yes");
+then
+	Gui gui = new Gui("Your result is: THE OFFICE", new ArrayList<String>());
+	gui.displayQuestion();
+end
+
+rule "no work place humor"
+when
+	exists Question(question=="Work place humor", answer=="no");
+then
+	String question = "Want to see James Franco & Seth Rogen as high schoolers";
+    ArrayList<String> answersList = new ArrayList();
+    answersList.add("yes");
+    answersList.add("no");
+    Gui gui = new Gui(question, answersList);
+    String result = gui.displayQuestion();
+    insert(new Question(question, answersList, result));
+end
+
+rule "Want to see James Franco"
+when
+	exists Question(question=="Want to see James Franco & Seth Rogen as high schoolers", answer=="yes");
+then
+	Gui gui = new Gui("Your result is: FREAKS & GEEKS", new ArrayList<String>());
+	gui.displayQuestion();
+end
+
+rule "no Want to see James Franco"
+when
+	exists Question(question=="Want to see James Franco & Seth Rogen as high schoolers", answer=="no");
+then
+	String question = "Do you want your NYC friends to hang out at a bar or cafe";
+    ArrayList<String> answersList = new ArrayList();
+    answersList.add("bar");
+    answersList.add("cafe");
+    Gui gui = new Gui(question, answersList);
+    String result = gui.displayQuestion();
+    insert(new Question(question, answersList, result));
+end
+
+
+rule "bar"
+when
+	exists Question(question=="Do you want your NYC friends to hang out at a bar or cafe", answer=="bar");
+then
+	Gui gui = new Gui("Your result is: HOW I MET YOUR MOTHER", new ArrayList<String>());
+	gui.displayQuestion();
+end
+
+rule "cafe"
+when
+	exists Question(question=="Do you want your NYC friends to hang out at a bar or cafe", answer=="cafe");
+then
+	Gui gui = new Gui("Your result is: FRIENDS", new ArrayList<String>());
+	gui.displayQuestion();
+end
+
+rule "morals"
+when
+	exists Question(question=="Do you like your characters to have questionable morals", answer=="yes");
+then
+	String question = "Friend group or dysfunctional family";
+    ArrayList<String> answersList = new ArrayList();
+    answersList.add("friends");
+    answersList.add("family");
+    Gui gui = new Gui(question, answersList);
+    String result = gui.displayQuestion();
+    insert(new Question(question, answersList, result));
+end
+
+rule "friends"
+when
+	exists Question(question=="Friend group or dysfunctional family", answer=="friends");
+then
+	Gui gui = new Gui("Your result is: IT'S ALWAYS SUNNY IN PHILADELPHIA", new ArrayList<String>());
+	gui.displayQuestion();
+end
+
+rule "family"
+when
+	exists Question(question=="Friend group or dysfunctional family", answer=="family");
+then
+	Gui gui = new Gui("Your result is: ARRESTED DEVELOPMENT", new ArrayList<String>());
 	gui.displayQuestion();
 end
