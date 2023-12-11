@@ -1,0 +1,71 @@
+package com.sample.rules
+ 
+import com.sample.DroolsTest;
+import com.sample.Gui;
+import java.util.ArrayList;
+
+declare Question
+    question: String
+    answersList: ArrayList
+    answer: String
+end
+
+rule "Init"
+when
+then
+    String question = "Drama or comedy";
+    ArrayList<String> answersList = new ArrayList();
+    answersList.add("drama");
+    answersList.add("comedy");
+    answersList.add("a little bit of both");
+    Gui gui = new Gui(question, answersList);
+    String result = gui.displayQuestion();
+    insert(new Question(question, answersList, result));
+end
+
+rule "Comedy"
+when
+	exists Question(question=="Drama or comedy", answer=="comedy");
+then
+	String question = "Do you like your characters to have questionable morals";
+    ArrayList<String> answersList = new ArrayList();
+    answersList.add("yes");
+    answersList.add("no");
+    Gui gui = new Gui(question, answersList);
+    String result = gui.displayQuestion();
+    insert(new Question(question, answersList, result));
+end
+
+rule "no morals"
+when
+	exists Question(question=="Do you like your characters to have questionable morals", answer=="no");
+then
+	String question = "Do you like strong female characters";
+    ArrayList<String> answersList = new ArrayList();
+    answersList.add("yes");
+    answersList.add("no");
+    Gui gui = new Gui(question, answersList);
+    String result = gui.displayQuestion();
+    insert(new Question(question, answersList, result));
+end
+
+rule "strong female characters"
+when
+	exists Question(question=="Do you like strong female characters", answer=="yes");
+then
+	String question = "Do you like them to sell drugs";
+    ArrayList<String> answersList = new ArrayList();
+    answersList.add("yes");
+    answersList.add("no");
+    Gui gui = new Gui(question, answersList);
+    String result = gui.displayQuestion();
+    insert(new Question(question, answersList, result));
+end
+
+rule "strong female sells drugs"
+when
+	exists Question(question=="Do you like them to sell drugs", answer=="yes");
+then
+	Gui gui = new Gui("Your result: WEEDS", new ArrayList<String>());
+	gui.displayQuestion();
+end
