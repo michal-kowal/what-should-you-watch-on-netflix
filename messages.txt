@@ -1,0 +1,7 @@
+QUESTION_DRAMA_OR_COMEDY, Drama or comedy
+ANSWER_DRAMA, Drama
+ANSWER_COMEDY, Comedy
+ANSWER_BOTH, A little bit of both
+QUESTION_CHARACTER_MORALS, Do you like your characters to have questionable morals
+ANSWER_YES, Yes
+ANSWER_NO, No

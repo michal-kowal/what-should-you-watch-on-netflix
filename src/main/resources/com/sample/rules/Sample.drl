@@ -3,6 +3,11 @@ package com.sample.rules
 import com.sample.DroolsTest;
 import com.sample.Gui;
 import java.util.ArrayList;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Map;
+import java.util.HashMap;
+import java.io.BufferedReader;
 
 declare Question
     question: String
@@ -10,14 +15,34 @@ declare Question
     answer: String
 end
 
+global Map<String, String> messagesMap;
+
 rule "Init"
 when
 then
-    String question = "Drama or comedy";
+    try (BufferedReader reader = new BufferedReader(new FileReader("messages.txt"))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+            String[] parts = line.split(",");
+            if (parts.length == 2) {
+                String key = parts[0].trim();
+                String value = parts[1].trim();
+                messagesMap.put(key, value);
+            }
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+end
+
+rule "Comedy or drama"
+when
+then
+	String question = (String) messagesMap.get("QUESTION_DRAMA_OR_COMEDY");
     ArrayList<String> answersList = new ArrayList();
-    answersList.add("drama");
-    answersList.add("comedy");
-    answersList.add("a little bit of both");
+    answersList.add((String) messagesMap.get("ANSWER_DRAMA"));
+    answersList.add((String) messagesMap.get("ANSWER_COMEDY"));
+    answersList.add((String) messagesMap.get("ANSWER_BOTH"));
     Gui gui = new Gui(question, answersList);
     String result = gui.displayQuestion();
     insert(new Question(question, answersList, result));
@@ -25,7 +50,7 @@ end
 
 rule "Comedy"
 when
-	exists Question(question=="Drama or comedy", answer=="comedy");
+	exists Question(question==(String) messagesMap.get("QUESTION_DRAMA_OR_COMEDY"),answer==(String) messagesMap.get("ANSWER_COMEDY"));
 then
 	String question = "Do you like your characters to have questionable morals";
     ArrayList<String> answersList = new ArrayList();
