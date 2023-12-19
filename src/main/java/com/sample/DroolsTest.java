@@ -1,7 +1,5 @@
 package com.sample;
 
-import java.util.HashMap;
-
 import javax.swing.JFrame;
 
 import org.kie.api.KieServices;
@@ -18,7 +16,6 @@ public class DroolsTest {
         KieServices ks = KieServices.Factory.get();
 	    KieContainer kContainer = ks.getKieClasspathContainer();
     	KieSession kSession = kContainer.newKieSession("ksession-rules");
-    	kSession.setGlobal("messagesMap", new HashMap<>());
     	try {
             kSession.fireAllRules();
         } catch (Throwable t) {

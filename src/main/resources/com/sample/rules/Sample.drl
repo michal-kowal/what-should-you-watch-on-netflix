@@ -15,34 +15,76 @@ declare Question
     answer: String
 end
 
-global Map<String, String> messagesMap;
+declare QuestionMap
+    key: String
+    val: String
+end
+
+declare AnswerMap
+    key: String
+    val: String
+end
 
 rule "Init"
 when
 then
-    try (BufferedReader reader = new BufferedReader(new FileReader("messages.txt"))) {
-        String line;
-        while ((line = reader.readLine()) != null) {
-            String[] parts = line.split(",");
-            if (parts.length == 2) {
-                String key = parts[0].trim();
-                String value = parts[1].trim();
-                messagesMap.put(key, value);
-            }
-        }
-    } catch (IOException e) {
-        e.printStackTrace();
+    BufferedReader questionReader = new BufferedReader(new FileReader("questions.txt"));
+    BufferedReader answerReader = new BufferedReader(new FileReader("answers.txt"));
+    BufferedReader questionAnswerReader = new BufferedReader(new FileReader("messages.txt"));
+
+    String qLine;
+    while ((qLine = questionReader.readLine()) != null) {
+        String[] parts = qLine.split(";");
+        String key = parts[0].trim();
+        String value = parts[1].trim();
+        insert(new QuestionMap(key, value));
     }
+
+    String aLine;
+    while ((aLine = answerReader.readLine()) != null) {
+        String[] parts = aLine.split(";");
+        String key = parts[0].trim();
+        String value = parts[1].trim();
+        insert(new AnswerMap(key, value));
+    }
+
+    while ((qLine = questionAnswerReader.readLine()) != null) {
+        String[] parts = qLine.split(";");
+        String q = parts[0].trim();
+        int value = Integer.parseInt(parts[1].trim()) + 2;
+        ArrayList<String> answersList = new ArrayList<>();
+        for (int i = 2; i < value; i++) {
+            answersList.add(parts[i].trim());
+        }
+        insert(new Question(q, answersList, null));
+    }
+
+    questionReader.close();
+    answerReader.close();
+    questionAnswerReader.close();
 end
 
 rule "Comedy or drama"
 when
+    q: Question(question == "DRAMA_OR_COMEDY", $list: answersList, answer == null)
+    c: QuestionMap(key == "DRAMA_OR_COMEDY", $val: val)
 then
-	String question = (String) messagesMap.get("QUESTION_DRAMA_OR_COMEDY");
+    String questionText = $val;
+    Gui gui = new Gui(questionText, $list);
+    String result = gui.displayQuestion();
+    modify(q) {
+        setAnswer(result);
+    }
+end
+
+rule "Comedy"
+when
+	exists Question(question==(String) messagesMap.get("QUESTION_DRAMA_OR_COMEDY"),answer==(String) messagesMap.get("ANSWER_COMEDY"));
+then
+	String question = "Do you like your characters to have questionable morals";
     ArrayList<String> answersList = new ArrayList();
-    answersList.add((String) messagesMap.get("ANSWER_DRAMA"));
-    answersList.add((String) messagesMap.get("ANSWER_COMEDY"));
-    answersList.add((String) messagesMap.get("ANSWER_BOTH"));
+    answersList.add("yes");
+    answersList.add("no");
     Gui gui = new Gui(question, answersList);
     String result = gui.displayQuestion();
     insert(new Question(question, answersList, result));
