@@ -11,7 +11,7 @@ import java.io.BufferedReader;
 
 declare Question
     question: String
-    answersList: ArrayList
+    answersMap: HashMap
     answer: String
 end
 
@@ -20,10 +20,6 @@ declare QuestionMap
     val: String
 end
 
-declare AnswerMap
-    key: String
-    val: String
-end
 
 rule "Init"
 when
@@ -40,23 +36,26 @@ then
         insert(new QuestionMap(key, value));
     }
 
+	HashMap<String, String> answerMap = new HashMap<String, String>();
     String aLine;
     while ((aLine = answerReader.readLine()) != null) {
         String[] parts = aLine.split(";");
         String key = parts[0].trim();
         String value = parts[1].trim();
-        insert(new AnswerMap(key, value));
+        answerMap.put(key, value);
     }
 
     while ((qLine = questionAnswerReader.readLine()) != null) {
         String[] parts = qLine.split(";");
         String q = parts[0].trim();
         int value = Integer.parseInt(parts[1].trim()) + 2;
-        ArrayList<String> answersList = new ArrayList<>();
+        HashMap<String, String> answers = new HashMap<String, String>();
         for (int i = 2; i < value; i++) {
-            answersList.add(parts[i].trim());
+            String answerKey = parts[i].trim();
+        	String answerValue = answerMap.get(answerKey);
+        	answers.put(answerKey, answerValue);
         }
-        insert(new Question(q, answersList, null));
+        insert(new Question(q, answers, null));
     }
 
     questionReader.close();
@@ -66,203 +65,198 @@ end
 
 rule "Comedy or drama"
 when
-    q: Question(question == "DRAMA_OR_COMEDY", $list: answersList, answer == null)
+    q: Question(question == "DRAMA_OR_COMEDY", $list: answersMap, answer == null)
     c: QuestionMap(key == "DRAMA_OR_COMEDY", $val: val)
 then
     String questionText = $val;
     Gui gui = new Gui(questionText, $list);
     String result = gui.displayQuestion();
-    modify(q) {
-        setAnswer(result);
-    }
+    q.setAnswer(result);
+    update(q);
 end
 
 rule "Comedy"
 when
-	exists Question(question==(String) messagesMap.get("QUESTION_DRAMA_OR_COMEDY"),answer==(String) messagesMap.get("ANSWER_COMEDY"));
+	q: Question(question == "DRAMA_OR_COMEDY", answer == "ANSWER_COMEDY")
+    c: QuestionMap(key == "QUESTION_CHARACTER_MORALS", $val: val)
+    toAsk: Question(question == "QUESTION_CHARACTER_MORALS", $list: answersMap, answer == null)
 then
-	String question = "Do you like your characters to have questionable morals";
-    ArrayList<String> answersList = new ArrayList();
-    answersList.add("yes");
-    answersList.add("no");
-    Gui gui = new Gui(question, answersList);
+	String questionText = $val;
+    Gui gui = new Gui(questionText, $list);
     String result = gui.displayQuestion();
-    insert(new Question(question, answersList, result));
-end
-
-rule "Comedy"
-when
-	exists Question(question==(String) messagesMap.get("QUESTION_DRAMA_OR_COMEDY"),answer==(String) messagesMap.get("ANSWER_COMEDY"));
-then
-	String question = "Do you like your characters to have questionable morals";
-    ArrayList<String> answersList = new ArrayList();
-    answersList.add("yes");
-    answersList.add("no");
-    Gui gui = new Gui(question, answersList);
-    String result = gui.displayQuestion();
-    insert(new Question(question, answersList, result));
+    toAsk.setAnswer(result);
+    update(toAsk);
 end
 
 rule "no morals"
 when
-	exists Question(question=="Do you like your characters to have questionable morals", answer=="no");
+	q: Question(question == "QUESTION_CHARACTER_MORALS", answer == "ANSWER_NO")
+    c: QuestionMap(key == "QUESTION_FEMALE_CHARACTERS", $val: val)
+    toAsk: Question(question == "QUESTION_FEMALE_CHARACTERS", $list: answersMap, answer == null)
 then
-	String question = "Do you like strong female characters";
-    ArrayList<String> answersList = new ArrayList();
-    answersList.add("yes");
-    answersList.add("no");
-    Gui gui = new Gui(question, answersList);
+	String questionText = $val;
+    Gui gui = new Gui(questionText, $list);
     String result = gui.displayQuestion();
-    insert(new Question(question, answersList, result));
+    toAsk.setAnswer(result);
+    update(toAsk);
 end
 
 rule "strong female characters"
 when
-	exists Question(question=="Do you like strong female characters", answer=="yes");
+	q: Question(question == "QUESTION_FEMALE_CHARACTERS", answer == "ANSWER_YES")
+    c: QuestionMap(key == "QUESTION_FEMALE_SELL_DRUGS", $val: val)
+    toAsk: Question(question == "QUESTION_FEMALE_SELL_DRUGS", $list: answersMap, answer == null)
 then
-	String question = "Do you like them to sell drugs";
-    ArrayList<String> answersList = new ArrayList();
-    answersList.add("yes");
-    answersList.add("no");
-    Gui gui = new Gui(question, answersList);
+	String questionText = $val;
+    Gui gui = new Gui(questionText, $list);
     String result = gui.displayQuestion();
-    insert(new Question(question, answersList, result));
+    toAsk.setAnswer(result);
+    update(toAsk);
 end
 
 rule "strong female sells drugs"
 when
-	exists Question(question=="Do you like them to sell drugs", answer=="yes");
+	q: Question(question == "QUESTION_FEMALE_SELL_DRUGS", answer == "ANSWER_YES")
+    c: QuestionMap(key == "RESULT_WEEDS", $val: val)
 then
-	Gui gui = new Gui("Your result is: WEEDS", new ArrayList<String>());
+	Gui gui = new Gui($val, new HashMap<String, String>());
 	gui.displayQuestion();
 end
 
 rule "no strong female sells drugs"
 when
-	exists Question(question=="Do you like them to sell drugs", answer=="no");
+	q: Question(question == "QUESTION_FEMALE_SELL_DRUGS", answer == "ANSWER_NO")
+	c: QuestionMap(key == "QUESTION_TINA_OR_AMY", $val: val)
+    toAsk: Question(question == "QUESTION_TINA_OR_AMY", $list: answersMap, answer == null)
 then
-	String question = "Tina Fey or Amy Poehler";
-    ArrayList<String> answersList = new ArrayList();
-    answersList.add("Tina");
-    answersList.add("Amy");
-    Gui gui = new Gui(question, answersList);
+	String questionText = $val;
+    Gui gui = new Gui(questionText, $list);
     String result = gui.displayQuestion();
-    insert(new Question(question, answersList, result));
+    toAsk.setAnswer(result);
+    update(toAsk);
 end
 
 rule "amy"
 when
-	exists Question(question=="Tina Fey or Amy Poehler", answer=="Amy");
+	q: Question(question == "QUESTION_TINA_OR_AMY", answer == "ANSWER_AMY")
+    c: QuestionMap(key == "RESULT_AMY", $val: val)
 then
-	Gui gui = new Gui("Your result is: PARKS & RECREATION", new ArrayList<String>());
+	Gui gui = new Gui($val, new HashMap<String, String>());
 	gui.displayQuestion();
 end
 
 rule "tina"
 when
-	exists Question(question=="Tina Fey or Amy Poehler", answer=="Tina");
+	q: Question(question == "QUESTION_TINA_OR_AMY", answer == "ANSWER_TINA")
+    c: QuestionMap(key == "RESULT_TINA", $val: val)
 then
-	Gui gui = new Gui("Your result is: 30 ROCKS", new ArrayList<String>());
+	Gui gui = new Gui($val, new HashMap<String, String>());
 	gui.displayQuestion();
 end
 
 rule "no strong female characters"
 when
-	exists Question(question=="Do you like strong female characters", answer=="no");
+	q: Question(question == "QUESTION_FEMALE_CHARACTERS", answer == "ANSWER_NO")
+    c: QuestionMap(key == "QUESTION_WORKPLACE_HUMOR", $val: val)
+    toAsk: Question(question == "QUESTION_WORKPLACE_HUMOR", $list: answersMap, answer == null)
 then
-	String question = "Work place humor";
-    ArrayList<String> answersList = new ArrayList();
-    answersList.add("yes");
-    answersList.add("no");
-    Gui gui = new Gui(question, answersList);
+	String questionText = $val;
+    Gui gui = new Gui(questionText, $list);
     String result = gui.displayQuestion();
-    insert(new Question(question, answersList, result));
+    toAsk.setAnswer(result);
+    update(toAsk);
 end
 
 rule "work place humor"
 when
-	exists Question(question=="Work place humor", answer=="yes");
+	q: Question(question == "QUESTION_WORKPLACE_HUMOR", answer == "ANSWER_YES")
+    c: QuestionMap(key == "RESULT_WORKPLACE_HUMOR", $val: val)
 then
-	Gui gui = new Gui("Your result is: THE OFFICE", new ArrayList<String>());
+	Gui gui = new Gui($val, new HashMap<String, String>());
 	gui.displayQuestion();
 end
 
 rule "no work place humor"
 when
-	exists Question(question=="Work place humor", answer=="no");
+	q: Question(question == "QUESTION_WORKPLACE_HUMOR", answer == "ANSWER_NO")
+    c: QuestionMap(key == "QUESTION_NO_WORKPLACE_HUMOR", $val: val)
+    toAsk: Question(question == "QUESTION_NO_WORKPLACE_HUMOR", $list: answersMap, answer == null)
 then
-	String question = "Want to see James Franco & Seth Rogen as high schoolers";
-    ArrayList<String> answersList = new ArrayList();
-    answersList.add("yes");
-    answersList.add("no");
-    Gui gui = new Gui(question, answersList);
+	String questionText = $val;
+    Gui gui = new Gui(questionText, $list);
     String result = gui.displayQuestion();
-    insert(new Question(question, answersList, result));
+    toAsk.setAnswer(result);
+    update(toAsk);
 end
 
 rule "Want to see James Franco"
 when
-	exists Question(question=="Want to see James Franco & Seth Rogen as high schoolers", answer=="yes");
+	q: Question(question == "QUESTION_NO_WORKPLACE_HUMOR", answer == "ANSWER_YES")
+    c: QuestionMap(key == "RESULT_JAMES", $val: val)
 then
-	Gui gui = new Gui("Your result is: FREAKS & GEEKS", new ArrayList<String>());
+	Gui gui = new Gui($val, new HashMap<String, String>());
 	gui.displayQuestion();
 end
 
 rule "no Want to see James Franco"
 when
-	exists Question(question=="Want to see James Franco & Seth Rogen as high schoolers", answer=="no");
+	q: Question(question == "QUESTION_NO_WORKPLACE_HUMOR", answer == "ANSWER_NO")
+    c: QuestionMap(key == "QUESTION_NYC_FRIENDS", $val: val)
+    toAsk: Question(question == "QUESTION_NYC_FRIENDS", $list: answersMap, answer == null)
 then
-	String question = "Do you want your NYC friends to hang out at a bar or cafe";
-    ArrayList<String> answersList = new ArrayList();
-    answersList.add("bar");
-    answersList.add("cafe");
-    Gui gui = new Gui(question, answersList);
+	String questionText = $val;
+    Gui gui = new Gui(questionText, $list);
     String result = gui.displayQuestion();
-    insert(new Question(question, answersList, result));
+    toAsk.setAnswer(result);
+    update(toAsk);
 end
 
 
 rule "bar"
 when
-	exists Question(question=="Do you want your NYC friends to hang out at a bar or cafe", answer=="bar");
+	q: Question(question == "QUESTION_NYC_FRIENDS", answer == "ANSWER_BAR")
+    c: QuestionMap(key == "RESULT_BAR", $val: val)
 then
-	Gui gui = new Gui("Your result is: HOW I MET YOUR MOTHER", new ArrayList<String>());
+	Gui gui = new Gui($val, new HashMap<String, String>());
 	gui.displayQuestion();
 end
 
 rule "cafe"
 when
-	exists Question(question=="Do you want your NYC friends to hang out at a bar or cafe", answer=="cafe");
+	q: Question(question == "QUESTION_NYC_FRIENDS", answer == "ANSWER_CAFE")
+    c: QuestionMap(key == "RESULT_CAFE", $val: val)
 then
-	Gui gui = new Gui("Your result is: FRIENDS", new ArrayList<String>());
+	Gui gui = new Gui($val, new HashMap<String, String>());
 	gui.displayQuestion();
 end
 
 rule "morals"
 when
-	exists Question(question=="Do you like your characters to have questionable morals", answer=="yes");
+	q: Question(question == "QUESTION_CHARACTER_MORALS", answer == "ANSWER_YES")
+    c: QuestionMap(key == "QUESTION_FRIEND_OR_FAMILY", $val: val)
+    toAsk: Question(question == "QUESTION_FRIEND_OR_FAMILY", $list: answersMap, answer == null)
 then
-	String question = "Friend group or dysfunctional family";
-    ArrayList<String> answersList = new ArrayList();
-    answersList.add("friends");
-    answersList.add("family");
-    Gui gui = new Gui(question, answersList);
+	String questionText = $val;
+    Gui gui = new Gui(questionText, $list);
     String result = gui.displayQuestion();
-    insert(new Question(question, answersList, result));
+    toAsk.setAnswer(result);
+    update(toAsk);
 end
 
 rule "friends"
 when
-	exists Question(question=="Friend group or dysfunctional family", answer=="friends");
+	q: Question(question == "QUESTION_FRIEND_OR_FAMILY", answer == "ANSWER_FRIENDS")
+    c: QuestionMap(key == "RESULT_FRIENDS", $val: val)
 then
-	Gui gui = new Gui("Your result is: IT'S ALWAYS SUNNY IN PHILADELPHIA", new ArrayList<String>());
+	Gui gui = new Gui($val, new HashMap<String, String>());
 	gui.displayQuestion();
 end
 
 rule "family"
 when
-	exists Question(question=="Friend group or dysfunctional family", answer=="family");
+	q: Question(question == "QUESTION_FRIEND_OR_FAMILY", answer == "ANSWER_FAMILY")
+    c: QuestionMap(key == "RESULT_FAMILY", $val: val)
 then
-	Gui gui = new Gui("Your result is: ARRESTED DEVELOPMENT", new ArrayList<String>());
+	Gui gui = new Gui($val, new HashMap<String, String>());
 	gui.displayQuestion();
 end
