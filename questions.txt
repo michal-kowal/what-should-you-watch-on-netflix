@@ -1,11 +1,44 @@
 DRAMA_OR_COMEDY;Drama or comedy?
+QUESTION_SCIFI;Do you like sci-fi or supernatural shows?
+QUESTION_GORE;Can you handle gore?
+QUESTION_ZOMBIES;Do you like zombies?
+RESULT_ZOMBIES;Your result is: THE WALKING DEAD
+QUESTION_VAMPIRES;Vampires?
+RESULT_VAMPIRES;Your result is: THE VAMPIRE DIARIES
+RESULT_NO_VAMPIRES;Your result is: SUPERNATURAL
+QUESTION_BRITISH;British characters?
+RESULT_WHO;Your result is: DOCTOR WHO
+RESULT_LOST;Your result is: LOST
+QUESTION_POLITICS;Politics?
+QUESTION_ACTION;Need action?
+RESULT_24;Your result is: 24
+QUESTION_ROMANCE; Scandalous romance?
+RESULT_SCANDAL;Your result is: SCANDAL
+QUESTION_OPTIMISTIC_OR_CYNICAL;Optimistic or cynical?
+RESULT_OPTIMISTIC;Your result is: THE WEST WING
+RESULT_CYNICAL;Your result is: HOUSE OF CARDS
+QUESTION_CRYING;Feel like crying?
+QUESTION_FOOTBALL;Do you like football?
+RESULT_FOOTBALL;Your result is: FRIDAY NIGHT LIGHTS
+QUESTION_HOSPITALS;Hospitals?
+RESULT_HOSPITALS;Your result is: GREY'S ANATOMY
+RESULT_NO_HOSPITALS;Your result is: PARENTHOOD
+QUESTION_CRIME;Do you like crime shows?
+QUESTION_ROOT_FOR_CRIMINALS;Do you root for criminals?
+RESULT_DEXTER;Your result is: DEXTER
+QUESTION_FORENSICS_OR_PSYCHOLOGY;Forensics or psychology?
+RESULT_FORENSICS;Your result is: CSI: MIAMI
+RESULT_PSYCHOLOGY;Your result is: CRIMINAL MINDS
+QUESTION_METH;Meth?
+RESULT_METH;Your result is: BREAKING BAD
+RESULT_NO_METH;Your result is: MAD MEN
 QUESTION_CHARACTER_MORALS;Do you like your characters to have questionable morals?
 QUESTION_FEMALE_CHARACTERS;Do you like strong female characters?
 QUESTION_FEMALE_SELL_DRUGS;Do you like them to sell drugs?
-RESULT_WEEDS;Your result is WEED
+RESULT_WEEDS;Your result is WEEDS
 QUESTION_TINA_OR_AMY;Tina Fey or Amy Poehler?
 RESULT_AMY;Your result is: PARKS & RECREATION
-RESULT_TINA;Your result is: 30 ROCKS
+RESULT_TINA;Your result is: 30 ROCK
 QUESTION_WORKPLACE_HUMOR;Work place humor?
 RESULT_WORKPLACE_HUMOR;Your result is: THE OFFICE
 QUESTION_NO_WORKPLACE_HUMOR;Want to see James Franco & Seth Rogen as high schoolers?
@@ -16,3 +49,6 @@ RESULT_CAFE;Your result is: FRIENDS
 QUESTION_FRIEND_OR_FAMILY;Friend group or dysfunctional family?
 RESULT_FRIENDS;Your result is: IT'S ALWAYS SUNNY IN PHILADELPHIA
 RESULT_FAMILY;Your result is: ARRESTED DEVELOPMENT
+QUESTION_TOWN_OR_PRISON;Small town or prison?
+RESULT_TOWN;Your result is: GILMORE GIRLS
+RESULT_PRISON;Your result is: ORANGE IS THE NEW BLACK
